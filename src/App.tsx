@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { ComposableMap, Geographies, Geography,Marker,ZoomableGroup } from "react-simple-maps";
@@ -22,6 +22,7 @@ function App() {
     coordinates: [-18,-18]
   }
 ]
+const tooltipRef=useRef<any>()
 
 const[content,setContent]=useState<string>("")
   return (
@@ -37,10 +38,11 @@ const[content,setContent]=useState<string>("")
       marginLeft: '20vw',
     }}>
       
+      <div className="tooltip" ref={tooltipRef} id="tooltip" style={{opacity: 0}}>
+        {content}
+      </div>
+      
       <ComposableMap>
-        <ReactTooltip place='top'>
-        {content}  
-        </ReactTooltip> 
       <ZoomableGroup zoom={1}>
       <Geographies geography="./features.json">
         {({ geographies }) =>
@@ -49,12 +51,18 @@ const[content,setContent]=useState<string>("")
            
             <Geography key={geo.rsmKey} data-for="registerTip" geography={geo}
             
-            onMouseEnter={()=>{
+            onMouseEnter={(e)=>{
+              console.log(e.clientX, e.clientY)
+              tooltipRef.current.style.opacity=0.9
+             tooltipRef.current.style.left = e.clientX + "px";
+             tooltipRef.current.style.top = e.clientY + "px";
+
               const {name}=geo.properties
               setContent(`${name}`)
             }}
             onMouseLeave={()=>{
               setContent("")
+              tooltipRef.current.style.opacity = 0
             }} 
             style={{
               hover: {

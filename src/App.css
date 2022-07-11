@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+div.tooltip {   
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  width: 100px;                    
+  height: 4em;                   
+  padding: 4px;               
+  font: 16px sans-serif;      
+  background: rgb(9, 195, 9,0.9);
+  border: 1px;        
+  border-radius: 8px;         
+  pointer-events: none;           
+}
