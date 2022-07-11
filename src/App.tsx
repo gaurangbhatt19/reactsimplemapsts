@@ -1,24 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import { ComposableMap, Geographies, Geography,Marker,ZoomableGroup } from "react-simple-maps";
+import ReactTooltip from 'react-tooltip';
+import { Tooltip } from '@mui/material';
 function App() {
+  type markerType={
+    markerOffset: number,
+    name:string,
+    coordinates:[number, number]
+  }[]
+
+  const markers:markerType=[{
+    markerOffset:-15,
+    name: "Demo 1",
+    coordinates: [78,18]
+  },
+  {
+    markerOffset:-15,
+    name: "Demo 2",
+    coordinates: [-18,-18]
+  }
+]
+
+const[content,setContent]=useState<string>("")
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App"
+    style={{
+      width: '70%',
+      height: '70%',
+      display: 'flex',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      alignItems: 'center',
+      border: '1px solid black',
+      marginLeft: '20vw',
+    }}>
+      
+      <ComposableMap>
+        <ReactTooltip place='top'>
+        {content}  
+        </ReactTooltip> 
+      <ZoomableGroup zoom={1}>
+      <Geographies geography="./features.json">
+        {({ geographies }) =>
+          geographies.map((geo) => (
+            <>
+           
+            <Geography key={geo.rsmKey} data-for="registerTip" geography={geo}
+            
+            onMouseEnter={()=>{
+              const {name}=geo.properties
+              setContent(`${name}`)
+            }}
+            onMouseLeave={()=>{
+              setContent("")
+            }} 
+            style={{
+              hover: {
+               fill: "cyan",
+              }
+            }}
+            />
+
+            </>
+          ))
+        }
+      </Geographies>
+      {
+        markers.map(({markerOffset,name,coordinates}) =>(
+          <Marker key={name} coordinates={coordinates}>
+            <circle r={10} fill="orange" stroke="white" strokeWidth={2}/>
+            <text y={markerOffset} textAnchor="middle" style={{ fontFamily:"system-ui", fill: "blue" }}>{name}</text>
+          </Marker>
+        )) 
+      }
+      </ZoomableGroup>
+    </ComposableMap>
     </div>
   );
 }
